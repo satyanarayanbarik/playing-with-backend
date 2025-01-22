@@ -1,13 +1,22 @@
+
 const express = require("express");
 const users = require('./MOCK_DATA .json');
 
 const app = express();
 const PORT = 8000;
 
-//Routes
+//middleware-->plugin : whenever url encoded data will come from it will add up in the body
+app.use(express.json());// Parses JSON request bodies
+app.use(express.urlencoded({ extended: false}));
+
+//REST API
+/*
 app.get("/api/users", (req,res) => {
     return res.json(users);
 });
+*/
+
+
 
 app.get("/api/users", (req,res) => {
     //return res.json(users);
@@ -15,16 +24,23 @@ app.get("/api/users", (req,res) => {
     <ul>
         ${users.map((user) => `<li>${user.first_name}</li>`).join(" ")};
     </ul>
-    `;
-});
+    `
+    res.send(html)
+}); 
+/*
+//REST Api
+app.get('/api/users', (req, res)=>{
+    return res.json(users);
+})
+    */
 
 //:id -> for dynamic
-app.get("/api/users/:id", (req,res) => { 
+/*app.get("/api/users/:id", (req,res) => { 
     //since id is a string convert ity to number
     const id = Number(req.params.id);
     const user = users.find((user) => user.id  === id);
     return res.json(users);
-});
+}); */
 
 /*
 app.post("/api/users", (req,res) => {
@@ -43,23 +59,60 @@ app.patch("/api/users/:id", (req,res) => {
 });
 */ //WE can merge all three of this
 
-app
-.route('/api/users/:id').get((req,res) => {
+app 
+.route("/api/users/:id")
+.get((req,res) => {
     const id = Number(req.params.id);
     const user = users.find((user) => user.id  === id);
-    return res.json(users);
-}).patch((req,res) => {
+
+    return res.json(user);
+})
+.patch((req,res) => {
     //Edit user with id
-    res.json({status: "Pending"});
-}).delete((req,res) => {
+    return res.json({status: "Pending"});
+})
+.delete((req,res) => {
     //delete user with id
-    return res.join({status: "Pending"});
+    return res.json({status: "Pending"});
+});
+/* --------------DIDNT WORKED-----------------
+app.post("/api/users", (req,res) => {
+    //TODO: Create new user
+    const body = req.body;
+    console.log("Body",body)
+    return res.json({status:"pending"});
+});
+USING ALTERNATE BELOW BY GPT :_ (
+*/
+app.post("/api/users", (req, res) => {
+    // Accept data from both req.body and req.query
+    const { first_name, last_name, email, gender, job } = req.body.first_name ? req.body : req.query;
+
+    if (!first_name || !last_name || !email) {
+        return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const newUser = {
+        id: users.length + 1,
+        first_name,
+        last_name,
+        email,
+        gender,
+        job
+    };
+
+    users.push(newUser);
+
+    console.log("New User Added:", newUser);
+
+    return res.status(201).json({ message: "User created successfully", user: newUser });
 });
 
-const myServer = http.createServer(app);
 
-myServer.listen(8000, () => {
-    console.log("Server started");
-});
+
+
+app.listen(PORT, () => {
+    console.log(`Server started at port ${PORT}`)
+})
 
 
