@@ -1,0 +1,26 @@
+REST API - JSON
+
+GET /user - list all user
+
+Best Practice
+-----------------
+GET /users - HTML Document Render
+GET /api/users - List all users JSON
+
+GET /api/user/1 -> GET USER WITH ID 1
+GET /api/user/2 -> GET USER WITH ID 2
+^
+|
+---------------------------------------
+^
+|
+DYNAMIC PATH PARAMETERS to solve the struggle for user id with 1,2,...etc
+e.g. GET /api/users/:id
+:id ->  Variable | Dynamic
+
+
+POST /api/users - Create new user
+
+PATCH /api/users/1 - Edit with user ID 1
+
+DELETE /api/user.1 - Delete the user with ID 1
