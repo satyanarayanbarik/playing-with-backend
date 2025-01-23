@@ -17,8 +17,12 @@ const userSchema = new mongoose.Schema({
     jobTitle: {
         type:String,
     },
-})
-const User = mongoose.model("user",userSchema);
+    gender:{
+        type:String,
+    },
+   },
+   { timestamps : true}
+);
 
 //middleware plugins
 app.use(express.urlencoded({ extended: false}));
@@ -32,3 +36,6 @@ app.use((req,res,next) => {
         }
     );
 });
+
+const User = mongoose.model("user",userSchema);
+module.exports =  User
